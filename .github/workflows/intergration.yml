@@ -77,13 +77,13 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # 等待 MySQL 服务准备好
-      - name: Wait for MySQL to be ready
-        run: |
-          until mysql -h 127.0.0.1 -u root -pmahao123 -e ""; do
-            echo "Waiting for MySQL..."
-            sleep 5
-          done
+#      # 等待 MySQL 服务准备好
+#      - name: Wait for MySQL to be ready
+#        run: |
+#          until mysql -h 127.0.0.1 -u root -pmahao123 -e ""; do
+#            echo "Waiting for MySQL..."
+#            sleep 5
+#          done
 
       # 运行测试
       - name: Run tests with Maven
