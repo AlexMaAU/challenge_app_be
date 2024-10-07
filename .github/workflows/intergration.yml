@@ -57,7 +57,7 @@ jobs:
 
       # 运行测试
       - name: Run tests with Maven
-        run: mvn test --file pom.xml
+        run: mvn test --file pom.xml -e -X
 
       # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
       - name: Update dependency graph
