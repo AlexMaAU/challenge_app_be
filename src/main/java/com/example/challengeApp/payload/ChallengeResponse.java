@@ -17,3 +17,4 @@ public class ChallengeResponse {
     private Integer totalPages; // auto-calculate
     private Boolean lastPage; // auto-calculate
 }
+
