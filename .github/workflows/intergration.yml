@@ -1,0 +1,122 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# 定义了一个 GitHub Actions 工作流，名为 "Java CI with Maven"
+name: Java CI with Maven
+
+# 触发条件（on）
+on:
+  # 当代码推送到 master 分支时触发工作流
+  push:
+    branches: [ "master" ]
+  # 当对 master 分支创建拉取请求时触发工作流
+  pull_request:
+    branches: [ "master" ]
+
+# GitHub Actions 的权限设置
+permissions:
+  contents: write
+  actions: read
+  pull-requests: write
+
+# 作业定义（jobs）, 在指定的环境中运行
+jobs:
+  build:
+    # 运行环境（runs-on）
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: mahao123
+          MYSQL_DATABASE: challenge_app  # 确保这里的数据库名称与代码中一致
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=3
+
+    # 步骤定义（steps）
+    steps:
+      # 使用 checkout 操作将代码库的代码检出到工作环境中
+      - uses: actions/checkout@v4
+      # 设置 JDK
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      # Create an empty settings-security.xml file
+      - name: Create settings-security.xml
+        run: echo "" > ~/.m2/settings-security.xml
+
+      # 等待 MySQL 服务准备好
+      - name: Wait for MySQL to be ready
+        run: |
+          until mysql -h 127.0.0.1 -u root -pmahao123 -e ""; do
+            echo "Waiting for MySQL..."
+            sleep 5
+          done
+
+      # 构建 Maven 项目
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    needs: build  # 使这个 job 依赖于 build job
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: mahao123
+          MYSQL_DATABASE: challenge_app  # 确保这里的数据库名称与代码中一致
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=3
+
+    steps:
+      # 使用 checkout 操作将代码库的代码检出到工作环境中
+      - uses: actions/checkout@v4
+      # 设置 JDK
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      # Create an empty settings-security.xml file
+      - name: Create settings-security.xml
+        run: echo "" > ~/.m2/settings-security.xml
+
+      # 等待 MySQL 服务准备好
+      - name: Wait for MySQL to be ready
+        run: |
+          until mysql -h 127.0.0.1 -u root -pmahao123 -e ""; do
+            echo "Waiting for MySQL..."
+            sleep 5
+          done
+
+      # 运行测试
+      - name: Run tests with Maven
+        run: mvn test --file pom.xml -e -X
+
+      # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
+      - name: Update dependency graph
+        uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6

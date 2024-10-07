@@ -27,7 +27,7 @@ public class ChallengeController {
     ) {
         ChallengeResponse challengeResponse = challengeService.getAllChallenges(pageNumber, pageSize, sortBy, sortOrder);
 
-        if(challengeResponse.getChallengeDTOList().isEmpty()) {
+        if(challengeResponse == null || challengeResponse.getChallengeDTOList() == null || challengeResponse.getChallengeDTOList().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -44,7 +44,7 @@ public class ChallengeController {
     ) {
         ChallengeResponse challengeResponse = challengeService.getChallengesByMonth(monthName, pageNumber, pageSize, sortBy, sortOrder);
 
-        if(challengeResponse.getChallengeDTOList().isEmpty()) {
+        if(challengeResponse == null || challengeResponse.getChallengeDTOList() == null || challengeResponse.getChallengeDTOList().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
