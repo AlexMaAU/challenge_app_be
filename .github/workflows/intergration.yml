@@ -18,8 +18,9 @@ on:
   pull_request:
     branches: [ "master" ]
 
+# GitHub Actions 的权限设置
 permissions:
-  contents: read
+  contents: write
   actions: read
   pull-requests: write
 
