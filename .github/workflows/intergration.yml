@@ -24,6 +24,20 @@ jobs:
     # 运行环境（runs-on）
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: mahao123
+          MYSQL_DATABASE: challenge_app  # 确保这里的数据库名称与代码中一致
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=3
+
     # 步骤定义（steps）
     steps:
       # 使用 checkout 操作将代码库的代码检出到工作环境中
@@ -35,6 +49,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+
+      # 等待 MySQL 服务准备好
+      - name: Wait for MySQL to be ready
+        run: |
+          until mysql -h 127.0.0.1 -u root -pmahao123 -e ""; do
+            echo "Waiting for MySQL..."
+            sleep 5
+          done
 
       # 构建 Maven 项目
       - name: Build with Maven
@@ -54,6 +76,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+
+      # 等待 MySQL 服务准备好
+      - name: Wait for MySQL to be ready
+        run: |
+          until mysql -h 127.0.0.1 -u root -pmahao123 -e ""; do
+            echo "Waiting for MySQL..."
+            sleep 5
+          done
 
       # 运行测试
       - name: Run tests with Maven
