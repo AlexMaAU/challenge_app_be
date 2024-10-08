@@ -14,6 +14,7 @@ public class Challenge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     @Column(name = "challengeMonth")
     private String monthName;
     private String description;

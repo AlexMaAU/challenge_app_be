@@ -12,7 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateChallengeDTO {
     private Long id;
+
     private String monthName;
+    
     @Size(min = 2, max = 2000, message = "Description between 2 and 2000")
     private String description;
 }
